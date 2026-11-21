@@ -1,0 +1,11 @@
+{
+  "name": "cartile-api-examples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zero-dependency Node.js 18+ examples for Cartile REST API v1",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

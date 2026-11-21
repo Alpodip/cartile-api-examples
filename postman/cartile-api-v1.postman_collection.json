@@ -1,0 +1,173 @@
+{
+  "info": {
+    "name": "Cartile REST API v1",
+    "_postman_id": "d2d7b418-4c4e-4b3e-9a21-202611210001",
+    "description": "Oto kiralama firmaları ve rezervasyon motorları için Cartile REST API v1 koleksiyonu (müsaitlik sorgulama, tekil araç durumu, idempotent ön rezervasyon ve HGS webhook).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://demo.cartile.com.tr/api/v1"
+    },
+    {
+      "key": "api_key",
+      "value": "crt_live_replace_with_your_api_key"
+    },
+    {
+      "key": "webhook_signature",
+      "value": "replace_with_hmac_sha256_hex_digest"
+    },
+    {
+      "key": "start_date",
+      "value": "2026-11-25"
+    },
+    {
+      "key": "end_date",
+      "value": "2026-11-28"
+    },
+    {
+      "key": "plate",
+      "value": "34CRT418"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Müsait Araçları Listele (GET /available-vehicles)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/available-vehicles?start={{start_date}}&end={{end_date}}&transmission=otomatik",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "available-vehicles"
+          ],
+          "query": [
+            {
+              "key": "start",
+              "value": "{{start_date}}"
+            },
+            {
+              "key": "end",
+              "value": "{{end_date}}"
+            },
+            {
+              "key": "transmission",
+              "value": "otomatik"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Tekil Araç Durumu Sorgula (GET /vehicle-status)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/vehicle-status?plate={{plate}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "vehicle-status"
+          ],
+          "query": [
+            {
+              "key": "plate",
+              "value": "{{plate}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Ön Rezervasyon Oluştur (POST /reservations)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"plate\": \"34 CRT 418\",\n  \"starts_at\": \"2026-11-25T10:00:00+03:00\",\n  \"planned_return_at\": \"2026-11-28T10:00:00+03:00\",\n  \"external_reference\": \"WEB-2026-9041\",\n  \"pickup_location\": \"Merkez Ofis\",\n  \"return_location\": \"Merkez Ofis\",\n  \"notes\": \"Postman test ön rezervasyonu\",\n  \"customer\": {\n    \"first_name\": \"Ahmet\",\n    \"last_name\": \"Yılmaz\",\n    \"phone\": \"0532 555 01 23\",\n    \"email\": \"ahmet@ornek.com\",\n    \"identity_type\": \"tc\",\n    \"identity_number\": \"12345678901\",\n    \"license_number\": \"EHL-849201\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "reservations"
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. HGS Webhook Bildirimi Gönder (POST /hgs/webhook)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Webhook-Signature",
+            "value": "{{webhook_signature}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"event\":\"violation.detected\",\"plate\":\"34CRT418\",\"violation_count\":1,\"amount\":425.00,\"operator\":\"KGM Otoyol\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/hgs/webhook",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "hgs",
+            "webhook"
+          ]
+        }
+      }
+    }
+  ]
+}
